@@ -1,0 +1,17 @@
+---
+- name: Smoke Test Connection
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Vérifier l'utilisateur
+      command: whoami
+      register: user_check
+
+    - name: Vérifier le droit sudo (become)
+      command: whoami
+      become: true
+      register: sudo_check
+
+    - name: Affichage des résultats
+      debug:
+        msg: "Connecté en tant que {{ user_check.stdout }}, Sudo fonctionne en tant que {{ sudo_check.stdout }}"

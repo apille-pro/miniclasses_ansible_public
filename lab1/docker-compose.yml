@@ -1,0 +1,24 @@
+services:
+  target-web:
+    image: ansible-lab-node:1.0.6
+    container_name: ansible-web
+    volumes:
+      - ~/.ssh/id_rsa_miniclasses_ansible.pub:/home/deploy/.ssh/authorized_keys:ro
+    ports:
+      - "2221:22"
+    networks:
+      - ansible-net
+
+  target-db:
+    image: ansible-lab-node:1.0.6
+    container_name: ansible-db
+    volumes:
+      - ~/.ssh/id_rsa_miniclasses_ansible.pub:/home/deploy/.ssh/authorized_keys:ro
+    ports:
+      - "2222:22"
+    networks:
+      - ansible-net
+
+networks:
+  ansible-net:
+    driver: bridge
