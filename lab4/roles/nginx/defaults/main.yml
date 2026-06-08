@@ -1,0 +1,12 @@
+---
+
+nginx_packages_to_install:
+  - vim
+  - git
+  - htop
+
+nginx_user: www-data
+nginx_group: www-data
+
+# Path depuis lequel Nginx tente de charger sa "landing page"
+nginx_www_location: /var/www/html/index.html

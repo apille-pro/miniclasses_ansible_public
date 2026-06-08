@@ -1,0 +1,7 @@
+---
+
+- name: "Déclencher le redémarrage de Nginx"
+  become: true
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
