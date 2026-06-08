@@ -1,0 +1,8 @@
+---
+- name: "Lab 3 - Installation et configuration de la stack Web Nginx"
+  hosts: web    # on souhaite configurer Nginx UNIQUEMENT sur les "serveurs" web de l'inventaire, pas sur les bases de données
+  # become: true  # Commenté car désormais géré proprement dans le rôle appelé
+  gather_facts: false  # inutile = on le désactive
+
+  roles:
+    - nginx

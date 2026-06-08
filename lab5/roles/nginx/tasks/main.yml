@@ -1,0 +1,34 @@
+---
+
+# ---------------------------------------------------------------------------------------
+# TÂCHE 04 : Installer les outils système (via le module spécifique à l'OS)
+# ---------------------------------------------------------------------------------------
+- name: "Installer les outils de base"
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop: "{{ nginx_packages_to_install }}"
+
+# ---------------------------------------------------------------------------------------
+# TÂCHE 01 : Installer le serveur Web Nginx (via le module spécifique à l'OS)
+# ---------------------------------------------------------------------------------------
+- name: "S'assurer que le package Nginx est installé"
+  become: true
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+# ---------------------------------------------------------------------------------------
+# TÂCHE 02 & 03 : Déployer la page dynamique et lier le Handler
+# ---------------------------------------------------------------------------------------
+- name: "Générer la page d'accueil dynamique index.html"
+  become: true
+  ansible.builtin.template:
+    src: templates/index.html.j2
+    dest: "{{ nginx_www_location }}"
+    owner: "{{ nginx_user }}"  # Propriétaire requis pour que Nginx puisse lire le fichier
+    group: "{{ nginx_group }}"
+    mode: '0644'
+  notify: "Déclencher le redémarrage de Nginx"
