@@ -6,3 +6,39 @@
 
   roles:
     - nginx
+
+
+- name: "Lab 5 - Installation du rôle geerlingguy.mysql sur les hosts db"
+  hosts: db
+  become: true  # nécessaire ! Cf. la documentation du rôle https://galaxy.ansible.com/ui/standalone/roles/geerlingguy/mysql/documentation/
+  gather_facts: true  # nécessaire ! Comme pour la plupart des rôles communautaires, pensés pour être génériques (non dépendants d'une distribution OS donnée)
+  vars:
+    # 1. Forcer l'installation de MariaDB à la place de MySQL (plus adapté à Docker)
+    mysql_packages:
+      - mariadb-server
+      - mariadb-client
+      - python3-mysqldb  # Requis par Ansible pour exécuter les requêtes de création de users
+
+    # 2. Indiquer au shim systemctl le nom exact du service MariaDB (spécifique à l'environnement de notre lab !)
+    mysql_daemon: "mariadb"
+
+    # 3. Sécurisation des accès globaux
+    mysql_root_password: "root_lab_password"  # Exemple ; on pourrait ici utiliser un password protégé via Ansible-Vault par exemple
+    mysql_bind_address: "0.0.0.0"  # Indispensable pour que le conteneur Web puisse interroger la DB
+
+    # 4. Création automatique de la base de données "miniclasses_db" du lab
+    mysql_databases:
+      - name: "miniclasses_db"
+        encoding: "utf8"
+        collation: "utf8_general_ci"
+
+    # 5. Création du user applicatif "app_user" (celui qu'utiliserait Nginx plus tard), en lui donnant tous les droits sur la bdd "miniclasses_db" 
+    mysql_users:
+      - name: "app_user"
+        password: "app_lab_password"  # Exemple ; on pourrait ici utiliser un password protégé via Ansible-Vault par exemple
+        host: "%"  # Le caractère '%' permet la connexion depuis n'importe quelle IP du réseau Docker
+        priv: "miniclasses_db.*:ALL"
+
+  roles:
+    # Appel du rôle communautaire une fois les variables surchargées
+    - role: geerlingguy.mysql
